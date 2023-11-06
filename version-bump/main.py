@@ -64,7 +64,8 @@ def update_xml(version, file_path):
         mytree.write(file_path)
     # MSBuild Props
     else:
-        myroot[0][1].text = version
+        version_property = [x for x in myroot[0] if x.tag == "Version"][-1]
+        version_property.text = version
         mytree.write(file_path, encoding="utf-8")
 
 
@@ -104,4 +105,7 @@ if __name__ == "__main__":
     else:
         raise Exception("No file was recognized as a supported format.")
 
-    print(f"::set-output name=status::Updated {file_path}")
+    if "GITHUB_OUTPUT" in os.environ:
+        with open(os.environ["GITHUB_OUTPUT"], "a") as f:
+            print("{0}={1}".format("status", f"Updated {file_path}"), file=f)
+

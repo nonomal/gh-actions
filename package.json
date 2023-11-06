@@ -1,0 +1,26 @@
+{
+  "name": "@bitwarden/gh-actions",
+  "version": "0.0.0",
+  "description": "Bitwarden GitHub Actions",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bitwarden/gh-actions.git"
+  },
+  "author": "Bitwarden Inc. <hello@bitwarden.com> (https://bitwarden.com)",
+  "license": "SEE LICENSE IN LICENSE.txt",
+  "bugs": {
+    "url": "https://github.com/bitwarden/gh-actions/issues"
+  },
+  "homepage": "https://bitwarden.com",
+  "devDependencies": {
+    "husky": "8.0.3",
+    "lint-staged": "14.0.1",
+    "prettier": "3.0.3"
+  },
+  "lint-staged": {
+    "*": "prettier --cache --write --ignore-unknown"
+  },
+  "scripts": {
+    "prepare": "husky install"
+  }
+}

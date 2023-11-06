@@ -10,13 +10,44 @@ on:
 jobs:
   lint:
     name: "Workflow Linter"
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-22.04
     steps:
+      - name: Checkout Branch
+        uses: actions/checkout@8ade135a41bc03ea155e62e844d188df1ea18608 # v4.1.0
+        with:
+          fetch-depth: 0
 
-      - name: Checkout Version Branch
-        uses: actions/checkout@ec3a7ce113134d7a93b817d10a8272cb61118579
+      - name: Get changed workflows
+        id: changed-workflows
+        run: |
+          MODIFIED_WORKFLOWS=$(git diff --name-only origin/${{ github.base_ref	}} | grep -E '.github/workflows/.*.(yml|yaml)' | tr '\n' ' ')
+          MODIFIED_EXISTING_WORKFLOWS=""
+          for workflow in $MODIFIED_WORKFLOWS; do
+              if [ -f $workflow ]; then
+                  MODIFIED_EXISTING_WORKFLOWS+=" ${workflow}"
+              fi
+          done
+          echo "modified-workflows=$MODIFIED_EXISTING_WORKFLOWS" >> $GITHUB_OUTPUT
 
       - name: Workflow Lint
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: bitwarden/gh-actions/lint-workflow@676ae4100b19625c0b0b70525e6c0181bd2d405f
+        uses: bitwarden/gh-actions/lint-workflow@master
+        with:
+          workflows: ${{ steps.changed-workflows.outputs.modified-workflows }}
+
+      - name: Get changed files
+        id: changed-files
+        uses: tj-actions/changed-files@8238a4103220c636f2dad328ead8a7c8dbe316a3 # v39.2.0
+        with:
+          files: .github/workflows/**
+
+      - name: Check for pinned versions
+        if: steps.changed-files.outputs.any_changed == 'true'
+        shell: bash
+        env:
+          FILE: ${{ steps.changed-files.outputs.all_changed_files }}
+        run: |
+          FILES=$(echo "${{ env.FILE }}")
+          curl -o $PWD/version-lint.sh https://raw.githubusercontent.com/bitwarden/gh-actions/master/.github/version-lint.sh
+          chmod +x $PWD/version-lint.sh && $PWD/version-lint.sh $FILES

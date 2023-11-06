@@ -1,0 +1,25 @@
+{
+  "name": "get-keyvault-secret",
+  "version": "1.0.0",
+  "description": "Github action for Azure Key Vault Operations",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Romil Goyal",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "20.7.0",
+    "typescript": "5.2.2"
+  },
+  "dependencies": {
+    "@actions/core": "1.10.1",
+    "@actions/exec": "1.1.1",
+    "azure-actions-webclient": "1.1.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "(https://github.com/bitwarden/gh-actions.git)"
+  }
+}
